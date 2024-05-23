@@ -1,55 +1,45 @@
-const initialState = {
-  count: 0,
+const Store = {
+  state: {
+    count: 0,
+  },
+  getState: function () {
+    console.log(this.state);
+    return this.state;
+  },
+
+  updateState: function (newState) {
+    this.state = { ...this.state, ...newState };
+    this.render();
+  },
+
+  render: function () {
+    console.log(this.state.count);
+    console.log(this.state);
+  },
 };
 
-function createStore(initialState) {
-  let state = initialState;
-
-  return {
-    getState: function () {
-      return state;
-    },
-
-    updateState: function (newState) {
-      state = { ...state, ...newState };
-    },
-  };
-}
-
-const store = createStore(initialState);
-
-function render() {
-  const state = store.getState();
-  console.log(state.count);
-  console.log(state);
-}
-
 function increment() {
-  const state = store.getState();
-  console.log(state);
+  const state = Store.getState();
+
   console.log("Increment");
-  store.updateState({ count: state.count + 1 });
-  render();
+  Store.updateState({ count: state.count + 1 });
 }
 
 function decrement() {
-  const state = store.getState();
-  console.log(state);
+  const state = Store.getState();
+
   console.log("Decrement");
-  store.updateState({ count: state.count - 1 });
-  render();
+  Store.updateState({ count: state.count - 1 });
 }
 
 function reset() {
-  const state = store.getState();
+  const state = Store.getState();
   console.log(state);
-  store.updateState({ count: state.count - state.count });
-  render();
+  Store.updateState({ count: state.count - state.count });
 }
 
-render();
-
 window.addEventListener("DOMContentLoaded", () => {
+  Store.render();
   document.getElementById("increment").addEventListener("click", increment);
   document.getElementById("decrement").addEventListener("click", decrement);
   document.getElementById("reset").addEventListener("click", reset);
