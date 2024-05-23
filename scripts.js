@@ -1,46 +1,88 @@
-const Store = {
-  state: {
-    count: 0,
-  },
-  getState: function () {
-    console.log(this.state);
-    return this.state;
-  },
+const initialCounterState = {
+  count: 0,
+}; //The initial state of the application
 
-  updateState: function (newState) {
-    this.state = { ...this.state, ...newState };
-    this.render();
-  },
-
-  render: function () {
-    console.log(this.state.count);
-    console.log(this.state);
-  },
+//DEFINING ACTION TYPES
+const increment = () => {
+  return {
+    type: "INCREMENT",
+  };
 };
 
-function increment() {
-  const state = Store.getState();
+const decrement = () => {
+  return {
+    type: "DECREMENT",
+  };
+};
 
-  console.log("Increment");
-  Store.updateState({ count: state.count + 1 });
+const reset = () => {
+  return {
+    type: "RESET",
+  };
+};
+
+//DEFINING ACTION CREATORS
+const incrementAction = () => {
+  return increment();
+};
+
+const decrementAction = () => {
+  return decrement();
+};
+
+const resetAction = () => {
+  return reset();
+};
+
+//DEFINING THE REDUCER
+const counterReducer = (state = initialCounterState, action) => {
+  switch (action.type) {
+    case "INCREMENT":
+      return { ...state, count: state.count + 1 };
+    case "DECREMENT":
+      return { ...state, count: state.count - 1 };
+    case "RESET":
+      return { ...state, count: 0 };
+    default:
+      return state;
+  }
+};
+
+//CREATING THE STORE
+function createStore(reducer) {
+  let state;
+  // let listeners = [];
+  const getState = () => state;
+  const dispatch = (action) => {
+    state = reducer(state, action);
+    // listeners.forEach((listener) => listener());
+  };
+
+  //const subscribe = (listener) => {
+  //   listeners.push(listener);
+  //   return () => {
+  //     listeners = listeners.filter((l) => l !== listener);
+  //   };
+  // };
+  dispatch({});
+  return { getState, dispatch };
+}
+
+const store = createStore(counterReducer);
+
+//EVENT-LISTENERS
+function increment() {
+  store.dispatch(incrementAction);
 }
 
 function decrement() {
-  const state = Store.getState();
-
-  console.log("Decrement");
-  Store.updateState({ count: state.count - 1 });
+  store.dispatch(decrementAction);
 }
 
 function reset() {
-  const state = Store.getState();
-  console.log(state);
-  Store.updateState({ count: state.count - state.count });
+  store.dispatch(resetAction);
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  Store.render();
-  document.getElementById("increment").addEventListener("click", increment);
-  document.getElementById("decrement").addEventListener("click", decrement);
-  document.getElementById("reset").addEventListener("click", reset);
-});
+document.getElementById("increment").addEventListener("click", increment);
+document.getElementById("decrement").addEventListener("click", decrement);
+document.getElementById("reset").addEventListener("click", reset);
