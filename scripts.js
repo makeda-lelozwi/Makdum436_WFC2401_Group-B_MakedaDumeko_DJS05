@@ -3,36 +3,17 @@ const initialCounterState = {
 }; //The initial state of the application
 
 //DEFINING ACTION TYPES
-const increment = () => {
-  return {
-    type: "INCREMENT",
-  };
-};
+const incrementType = () => ({
+  type: "INCREMENT",
+});
 
-const decrement = () => {
-  return {
-    type: "DECREMENT",
-  };
-};
+const decrementType = () => ({
+  type: "DECREMENT",
+});
 
-const reset = () => {
-  return {
-    type: "RESET",
-  };
-};
-
-//DEFINING ACTION CREATORS
-const incrementAction = () => {
-  return increment();
-};
-
-const decrementAction = () => {
-  return decrement();
-};
-
-const resetAction = () => {
-  return reset();
-};
+const resetType = () => ({
+  type: "RESET",
+});
 
 //DEFINING THE REDUCER
 const counterReducer = (state = initialCounterState, action) => {
@@ -51,38 +32,48 @@ const counterReducer = (state = initialCounterState, action) => {
 //CREATING THE STORE
 function createStore(reducer) {
   let state;
-  // let listeners = [];
+  let listeners = [];
   const getState = () => state;
   const dispatch = (action) => {
     state = reducer(state, action);
-    // listeners.forEach((listener) => listener());
+    listeners.forEach((listener) => listener());
   };
 
-  //const subscribe = (listener) => {
-  //   listeners.push(listener);
-  //   return () => {
-  //     listeners = listeners.filter((l) => l !== listener);
-  //   };
-  // };
+  const subscribe = (listener) => {
+    listeners.push(listener);
+    return () => {
+      listeners = listeners.filter((l) => l !== listener);
+    };
+  };
   dispatch({});
-  return { getState, dispatch };
+  return { getState, dispatch, subscribe };
 }
 
 const store = createStore(counterReducer);
 
 //EVENT-LISTENERS
-function increment() {
-  store.dispatch(incrementAction);
-}
+const increment = () => {
+  store.dispatch(incrementType());
+};
 
-function decrement() {
-  store.dispatch(decrementAction);
-}
+const decrement = () => {
+  store.dispatch(decrementType());
+};
 
-function reset() {
-  store.dispatch(resetAction);
-}
+const reset = () => {
+  store.dispatch(resetType());
+};
 
-document.getElementById("increment").addEventListener("click", increment);
-document.getElementById("decrement").addEventListener("click", decrement);
-document.getElementById("reset").addEventListener("click", reset);
+store.subscribe(() => {
+  console.log("State changed:", store.getState());
+});
+
+console.log("Initial state:", store.getState());
+
+increment();
+
+increment();
+
+increment();
+
+reset();
