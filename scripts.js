@@ -74,6 +74,8 @@ increment();
 
 increment();
 
+decrement();
+
 increment();
 
 reset();
